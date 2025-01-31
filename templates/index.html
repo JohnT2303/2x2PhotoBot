@@ -4,29 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Processor</title>
+    <title>Ahorro de tiempo</title>
     <script src="/static/script.js" defer></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <!-- Encabezado fijo -->
     <header>
-        <h1>Photo Processor</h1>
+        <h1>PhotoEdit</h1>
     </header>
 
-    <!-- Contenedor principal -->
     <main>
-        <!-- Input para cargar la imagen -->
         <input type="file" id="imageUploader" accept="image/*">
         <br><br>
         <img id="originalImage" style="max-width: 300px;">
         <br><br>
 
-        <!-- Control para ajustar el brillo -->
-        <label for="brightness">Adjust Brightness:</label>
+        <label for="brightness">ajustar brillo:</label>
         <input type="range" id="brightness" min="0.5" max="3.0" step="0.1" value="1.5">
         <br><br>
+
+        <img id="cropImage" style="max-width: 100%; display: none;">
+        <button id="applyCrop" style="display: none;">Aplicar recorte</button>
+        </div>
+
 
         <img id="processedImage" style="max-width: 300px;">
         <br><br>
@@ -56,6 +57,9 @@
 
         function updateImage() {
             if (currentImage) {
+                const processedImageElement = document.getElementById('processedImage');
+                processedImageElement.src = '';
+
                 fetch('/process_image', {
                     method: 'POST',
                     headers: {
@@ -66,12 +70,24 @@
                         brightness: brightness
                     })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error processing image');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        document.getElementById('processedImage').src = data.processed_image;
+                        processedImageElement.src = data.processed_image;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        processedImageElement.alt = 'Error processing image';
                     });
+            } else {
+                alert('Please upload an image before adjusting brightness.');
             }
         }
+
 
         document.getElementById('saveImage').addEventListener('click', function () {
             const link = document.createElement('a');

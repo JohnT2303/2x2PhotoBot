@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     const imageUploader = document.getElementById("imageUploader");
-    const brightnessSlider = document.getElementById("brightness");
-    const processButton = document.getElementById("processImage");
     const saveButton = document.getElementById("saveImage");
     const originalImage = document.getElementById("originalImage");
     const processedImage = document.getElementById("processedImage");
@@ -20,23 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // processButton.addEventListener("click", () => {
-    //     if (!originalImageData) {
-    //         alert("Please upload an image first!");
-    //         return;
-    //     }
-
-    //     const brightness = brightnessSlider.value;
-    //     fetch("/process_image", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({ image: originalImageData, brightness }),
-    //     })
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             processedImage.src = data.processed_image;
-    //         });
-    // });
 
     saveButton.addEventListener("click", () => {
         if (!processedImage.src) {
@@ -49,4 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
         a.download = "processed_image.jpg";
         a.click();
     });
+
+
+
+
+
+
 });
