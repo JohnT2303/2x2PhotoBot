@@ -26,19 +26,30 @@ def rotate_image(image, angle):
 
 
 def auto_adjust_brightness_contrast_cv(image, target_brightness=130):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    mean_brightness = np.mean(gray)
-    
-    beta = target_brightness - mean_brightness
-    adjusted = cv2.convertScaleAbs(image, alpha=1.0, beta=beta)
-
-    lab = cv2.cvtColor(adjusted, cv2.COLOR_BGR2LAB)
+    # Convert to LAB color space for better color preservation
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    
+    # Apply CLAHE to L channel for local contrast enhancement
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
     l = clahe.apply(l)
+    
+    # Calculate current brightness
+    current_brightness = np.mean(l)
+    
+    # Adjust brightness with smooth transition
+    brightness_factor = target_brightness / current_brightness
+    l = np.clip(l * brightness_factor, 0, 255).astype(np.uint8)
+    
+    # Merge channels back
     lab = cv2.merge((l, a, b))
+    
+    # Convert back to BGR
     adjusted = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
-
+    
+    # Apply subtle color correction
+    adjusted = cv2.convertScaleAbs(adjusted, alpha=1.1, beta=0)
+    
     return adjusted
 
 @app.route('/process_image', methods=['POST'])
