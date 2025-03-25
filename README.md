@@ -33,7 +33,7 @@ A powerful Flask-based API service that automatically enhances portrait photos u
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/fotosedit.git
+git clone https://github.com/JohnT2303/2x2PhotoBot.git
 cd fotosedit
 ```
 
